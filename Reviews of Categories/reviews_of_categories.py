@@ -4,17 +4,22 @@ Find the top business categories based on the total number of reviews. Output th
 # Import your libraries
 import pandas as pd
 
-# Start writing code
-#yelp_business.head()
+yelp_business.head()
 
-#make a column list of the categories
-yelp_business['cats'] = yelp_business['categories'].str.split(";")
+### Split and Explode
 
-#get only the colums we need 
-yelp_business = yelp_business[['cats', 'review_count']]
+#reassign categories to be a split string
+yelp_business['categories'] = yelp_business['categories'].str.split(";")
 
-# Use explode to separate the cats list components to new rows (preserving review counts)
-yelp_business = yelp_business.explode('cats')
+# grab only the colums we need 
+yelp_business = yelp_business[['categories', 'review_count']]
 
-# group by category and sum reviews
-yelp_business = yelp_business.groupby(by='cats').sum().reset_index().sort_values('review_count', ascending=False)
+### Use explode to separate the categorys list components to new rows 
+### preserving review counts for each item mentioned in the review
+yelp_business = yelp_business.explode('categories')
+
+# group by categories and sum review counts
+yelp_business = yelp_business.groupby(by='categories').sum().reset_index()
+
+# Sort the values to descending order
+yelp_business.sort_values('review_count', ascending=False)
