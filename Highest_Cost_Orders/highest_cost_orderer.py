@@ -8,11 +8,17 @@ For simplicity, you can assume that every first name in the dataset is unique.
 # Import your libraries
 import pandas as pd
 
-# Start writing code
+# merge customers and orders on id/cust_id and sort values
 df = customers.merge(orders, how = 'right', left_on = 'id', right_on = 'cust_id').sort_values (by = ['first_name','order_date'])
 
+# Group by first name and order date and sum the total order cost
 df = df.groupby(['first_name','order_date'], as_index = False)['total_order_cost'].sum()
 
+# Remove hours/minutes/seconds
 df['order_date'] = df['order_date'].dt.strftime('%Y-%m-%d')
+
+# Get only values between Feb 1, 2019 and May 1, 2019
 df[df['order_date'].between('2019-02-01', '2019-05-01')]
+
+# Return only the largest daily total order
 df.nlargest(1,'total_order_cost', keep= 'all')
